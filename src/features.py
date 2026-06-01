@@ -11,8 +11,8 @@ def _classify_trend(slope: float) -> str:
     return "stable"
 
 
-def compute_features(pos_df: pd.DataFrame, inventory_df: pd.DataFrame) -> pd.DataFrame:
-    season_start = pd.Timestamp(SEASON_START_DATE)
+def compute_features(pos_df: pd.DataFrame, inventory_df: pd.DataFrame, season_start_date: str | None = None) -> pd.DataFrame:
+    season_start = pd.Timestamp(season_start_date or SEASON_START_DATE)
     reference_date = pos_df["date"].max()
 
     season_sales = (

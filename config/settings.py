@@ -7,7 +7,7 @@ load_dotenv()
 LLM_MODEL = "llama-3.3-70b-versatile"
 
 # Safely grab your Groq API key from the environment configuration
-GROQ_API_KEY = os.getenv
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 LLM_MAX_TOKENS = 512
 SEASON_START_DATE = "2026-03-01"
 SEASON_END_DATE   = "2026-06-30"
