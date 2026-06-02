@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Store Poster Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #080c14; font-family: 'Segoe UI', system-ui, sans-serif; padding: 32px 24px; min-height: 100vh; }
+  h2 { color: #e2e8f0; font-size: 1.1rem; margin-bottom: 6px; }
+  .sub { color: #64748b; font-size: 0.82rem; margin-bottom: 28px; }
+  .posters { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+
+  /* ── POSTER SHELL ── */
+  .poster {
+    width: 320px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  }
+
+  /* ── RED POSTER ── */
+  .poster.red { background: linear-gradient(160deg, #1a0000 0%, #3b0000 30%, #6b0f0f 60%, #b91c1c 100%); }
+  .poster.red .glow { background: radial-gradient(circle at 50% 40%, rgba(239,68,68,0.45) 0%, transparent 65%); }
+  .poster.red .accent { color: #f87171; }
+  .poster.red .disc { color: #fff; text-shadow: 0 0 60px rgba(239,68,68,1), 0 0 20px rgba(255,100,100,0.8); }
+  .poster.red .badge { background: rgba(239,68,68,0.18); border: 1px solid rgba(239,68,68,0.55); color: #fca5a5; }
+  .poster.red .divider { background: linear-gradient(90deg, transparent, #ef4444, transparent); }
+  .poster.red .print-btn { background: linear-gradient(135deg, #dc2626, #991b1b); box-shadow: 0 4px 20px rgba(239,68,68,0.5); }
+  .poster.red .ring { border-color: rgba(239,68,68,0.2); }
+  .poster.red .ring2 { border-color: rgba(239,68,68,0.08); }
+
+  /* ── AMBER POSTER ── */
+  .poster.amber { background: linear-gradient(160deg, #0d0700 0%, #1c0f00 30%, #5c3200 60%, #b45309 100%); }
+  .poster.amber .glow { background: radial-gradient(circle at 50% 40%, rgba(245,158,11,0.4) 0%, transparent 65%); }
+  .poster.amber .accent { color: #fbbf24; }
+  .poster.amber .disc { color: #fff; text-shadow: 0 0 60px rgba(245,158,11,1), 0 0 20px rgba(255,200,50,0.8); }
+  .poster.amber .badge { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.5); color: #fcd34d; }
+  .poster.amber .divider { background: linear-gradient(90deg, transparent, #f59e0b, transparent); }
+  .poster.amber .print-btn { background: linear-gradient(135deg, #d97706, #92400e); box-shadow: 0 4px 20px rgba(245,158,11,0.5); }
+  .poster.amber .ring { border-color: rgba(245,158,11,0.18); }
+  .poster.amber .ring2 { border-color: rgba(245,158,11,0.07); }
+
+  /* ── INNER LAYOUT ── */
+  .poster-inner { position: relative; z-index: 2; padding: 28px 26px 22px; }
+  .glow-layer { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .glow { position: absolute; inset: 0; }
+
+  /* Decorative rings */
+  .ring {
+    position: absolute; border-radius: 50%; border: 1px solid;
+    right: -60px; top: -60px; width: 220px; height: 220px;
+    pointer-events: none;
+  }
+  .ring2 {
+    position: absolute; border-radius: 50%; border: 1px solid;
+    right: -30px; top: -30px; width: 140px; height: 140px;
+    pointer-events: none;
+  }
+
+  /* Top row */
+  .top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .badge { font-size: 0.58rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; padding: 5px 12px; border-radius: 30px; }
+  .close-btn { color: rgba(255,255,255,0.3); font-size: 0.75rem; cursor: pointer; background: rgba(255,255,255,0.07); border: none; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+  /* Store label */
+  .store-label { color: rgba(255,255,255,0.38); font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 3px; }
+  .store-name { color: #fff; font-size: 1.35rem; font-weight: 900; letter-spacing: -0.3px; margin-bottom: 18px; }
+
+  /* Divider */
+  .divider { height: 1px; margin: 0 -4px 20px; opacity: 0.6; }
+
+  /* Discount hero */
+  .discount-area { text-align: center; padding: 8px 0 20px; }
+  .disc-label { font-size: 0.58rem; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+  .disc { font-size: 4.8rem; font-weight: 900; line-height: 1; letter-spacing: -2px; }
+  .disc-sub { font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 6px; }
+
+  /* Tagline box */
+  .tagline {
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .tagline::before {
+    content: '"';
+    position: absolute; top: 6px; left: 10px;
+    font-size: 2.5rem; line-height: 1;
+    color: rgba(255,255,255,0.08);
+    font-family: Georgia, serif;
+  }
+  .tagline p { color: rgba(255,255,255,0.88); font-size: 0.8rem; line-height: 1.55; font-style: italic; padding-left: 8px; }
+
+  /* Stats row */
+  .stats { display: flex; justify-content: space-around; padding: 14px 0; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 18px; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 1.1rem; font-weight: 800; }
+  .stat-lbl { font-size: 0.55rem; color: rgba(255,255,255,0.35); letter-spacing: 0.5px; text-transform: uppercase; margin-top: 2px; }
+
+  /* Print button */
+  .print-btn {
+    width: 100%; padding: 12px; border: none; border-radius: 10px;
+    color: #fff; font-weight: 800; font-size: 0.82rem;
+    letter-spacing: 0.8px; cursor: pointer; text-transform: uppercase;
+    transition: opacity 0.15s;
+  }
+  .print-btn:hover { opacity: 0.88; }
+
+  /* ── SIDEBAR PREVIEW ── */
+  .sidebar-preview { margin-top: 36px; }
+  .sidebar-preview h3 { color: #94a3b8; font-size: 0.82rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .chip-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .chip { padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: 1px solid; }
+  .chip.red-c   { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+  .chip.amber-c { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.4); color: #fcd34d; }
+  .chip.green-c { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); color: #6ee7b7; }
+  .poster-icon { padding: 5px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer; border: 1px solid; }
+  .poster-icon.red-c   { background: rgba(239,68,68,0.2); border-color: #ef4444; color: #ef4444; }
+  .poster-icon.amber-c { background: rgba(245,158,11,0.2); border-color: #f59e0b; color: #f59e0b; }
+  .no-poster { font-size: 0.62rem; color: #334155; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h2>Store Discount Poster — Redesigned</h2>
+<p class="sub">Slides into main content when you click 🖼 on an Amber/Red store chip in the sidebar.</p>
+
+<div class="posters">
+
+  <!-- RED POSTER -->
+  <div class="poster red">
+    <div class="glow-layer"><div class="glow"></div></div>
+    <div class="ring"></div>
+    <div class="ring2"></div>
+    <div class="poster-inner">
+      <div class="top-row">
+        <span class="badge">⚠ Clearance Alert</span>
+        <button class="close-btn">✕</button>
+      </div>
+      <div class="store-label">Store</div>
+      <div class="store-name">Store Alpha</div>
+      <div class="divider"></div>
+      <div class="discount-area">
+        <div class="disc-label">Season-End Blowout</div>
+        <div class="disc">40%<br><span style="font-size:2rem;letter-spacing:0">OFF</span></div>
+        <div class="disc-sub accent">Everything Must Go!</div>
+      </div>
+      <div class="tagline">
+        <p>Final clearance — last chance before the season ends. Stock running out <strong>FAST</strong>. Don't miss out!</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-val accent">12</div><div class="stat-lbl">SKUs</div></div>
+        <div class="stat"><div class="stat-val accent">8 days</div><div class="stat-lbl">Act by</div></div>
+        <div class="stat"><div class="stat-val accent">3</div><div class="stat-lbl">Categories</div></div>
+      </div>
+      <button class="print-btn">🖨 &nbsp;Print This Poster</button>
+    </div>
+  </div>
+
+  <!-- AMBER POSTER -->
+  <div class="poster amber">
+    <div class="glow-layer"><div class="glow"></div></div>
+    <div class="ring"></div>
+    <div class="ring2"></div>
+    <div class="poster-inner">
+      <div class="top-row">
+        <span class="badge">⚡ Limited Offer</span>
+        <button class="close-btn">✕</button>
+      </div>
+      <div class="store-label">Store</div>
+      <div class="store-name">Store Beta</div>
+      <div class="divider"></div>
+      <div class="discount-area">
+        <div class="disc-label">Seasonal Savings</div>
+        <div class="disc">20%<br><span style="font-size:2rem;letter-spacing:0">OFF</span></div>
+        <div class="disc-sub accent">While Stocks Last!</div>
+      </div>
+      <div class="tagline">
+        <p>Limited-time deal — save <strong>20%</strong> on selected items. Fresh deals, real value. Act before it's too late!</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-val accent">7</div><div class="stat-lbl">SKUs</div></div>
+        <div class="stat"><div class="stat-val accent">15 days</div><div class="stat-lbl">Act by</div></div>
+        <div class="stat"><div class="stat-val accent">2</div><div class="stat-lbl">Categories</div></div>
+      </div>
+      <button class="print-btn">🖨 &nbsp;Print This Poster</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sidebar chip preview -->
+<div class="sidebar-preview">
+  <h3>Sidebar store chips</h3>
+  <div class="chip-row">
+    <div class="chip red-c">Store Alpha</div>
+    <div class="poster-icon red-c">🖼 Poster</div>
+  </div>
+  <div class="chip-row">
+    <div class="chip amber-c">Store Beta</div>
+    <div class="poster-icon amber-c">🖼 Poster</div>
+  </div>
+  <div class="chip-row">
+    <div class="chip green-c">Store Gamma</div>
+    <span class="no-poster">Green — no poster</span>
+  </div>
+</div>
+
+</body>
+</html>

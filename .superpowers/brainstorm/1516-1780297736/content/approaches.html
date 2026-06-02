@@ -1,0 +1,42 @@
+<h2>Three approaches for the Store Poster feature</h2>
+<p class="subtitle">Poster opens when you click a "Poster" button on an Amber/Red store chip in the sidebar.</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Inline slide-in panel (Recommended)</h3>
+      <p>Clicking "Poster" on a store chip slides open a full-width poster panel inside the main content area — right below the sidebar chip. The poster uses a gradient background, bold discount headline, catchy tagline from built-in templates, and store name. A "Print / Save" button triggers browser print. <strong>No modal, no overlay</strong> — stays inside the page flow.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>Seamless UX — no modal z-index issues</li><li>Easy to compare posters side-by-side</li><li>Simple to implement</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Takes up vertical space in the sidebar</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Full-screen overlay modal</h3>
+      <p>Clicking "Poster" opens a centered full-screen modal with the poster displayed large and prominent. A dark backdrop dims the rest of the page. The poster uses cinematic gradient, huge discount %, and store branding. Close button or Escape to dismiss. Print button inside the modal.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>Most poster-like feel — dramatic, full attention</li><li>Ideal for demo / presentation</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>More code (backdrop, focus trap, keyboard close)</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Dedicated poster section in main content</h3>
+      <p>A "Store Posters" section auto-appears in the main content area whenever Amber/Red stores are present. Individual store posters render as horizontal cards — no extra click on the chip needed. Each card has store name, avg discount, tier badge, and tagline.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>Always visible — no extra interaction needed</li><li>Good for comparing all stores at once</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Can clutter the page if many stores</li><li>Less "poster" feel</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>

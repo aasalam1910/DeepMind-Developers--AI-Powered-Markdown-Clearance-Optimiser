@@ -17,12 +17,20 @@ const COLS = [
   { key: 'sell_through_pct', label: 'Sell-Thru %', num: true },
 ]
 
-function formatCellValue(value, isNumeric) {
+function formatCellValue(value, isNumeric, colKey) {
   if (value == null || value === '') return '-'
   if (!isNumeric) return value
 
   const num = Number(value)
-  return Number.isFinite(num) ? num.toFixed(1) : value
+  if (!Number.isFinite(num)) return value
+
+  if (colKey === 'days_of_cover') {
+    if (num >= 365) return `${(num / 30).toFixed(0)}mo ⚠`
+    if (num >= 90)  return `${Math.round(num)}d`
+    return `${num.toFixed(1)}d`
+  }
+
+  return num.toFixed(1)
 }
 
 export default function SKUTable({ data, selectedRow, onSelect }) {
@@ -106,6 +114,11 @@ export default function SKUTable({ data, selectedRow, onSelect }) {
                         >
                           {tier}
                         </span>
+                        {row.festival_name && row.markdown_pct > 0 && (
+                          <span className="festival-badge" title={`${row.festival_name} boost: ${row.festival_boost}x velocity — markdown reduced`}>
+                            🎉 {row.festival_name}
+                          </span>
+                        )}
                       </td>
                     )
                   }
@@ -116,7 +129,7 @@ export default function SKUTable({ data, selectedRow, onSelect }) {
                       className={col.bold ? 'bold' : ''}
                       style={{ textAlign: col.num ? 'right' : 'left' }}
                     >
-                      {formatCellValue(row[col.key], col.num)}
+                      {formatCellValue(row[col.key], col.num, col.key)}
                     </td>
                   )
                 })}

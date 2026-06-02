@@ -1,20 +1,34 @@
 import { useState } from 'react'
-import { exportSheet } from '../api'
+import { exportSheet, detectFestivals } from '../api'
 
 const TIER_OPTIONS = ['Red', 'Amber', 'Green']
 const TIER_CLASS   = { Red: 'red', Amber: 'amber', Green: 'green' }
+
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 export default function Sidebar({
   onLoadSample, onUpload, onRecalculate, datesChanged, loading,
   recommendations, filters, setFilters,
   rationales, seasonDates, setSeasonDates,
+  onShowPoster,
+  festivals, setFestivals, onDetectFestivals, festivalDetecting, onApplyFestivals,
 }) {
-  const [posFile, setPosFile] = useState(null)
-  const [invFile, setInvFile] = useState(null)
+  const [posFile,   setPosFile]   = useState(null)
+  const [invFile,   setInvFile]   = useState(null)
   const [exporting, setExporting] = useState(false)
+  const [festRegion,  setFestRegion]  = useState('All India')
+  const [festYear,    setFestYear]    = useState(new Date().getFullYear())
+  const [festInput,   setFestInput]   = useState('')
+  const [festLooking, setFestLooking] = useState(false)
 
   const stores     = recommendations ? [...new Set(recommendations.map(r => r.store))].sort() : []
   const categories = recommendations ? [...new Set(recommendations.map(r => r.category))].sort() : []
+  const storeTierSets = recommendations
+    ? Object.fromEntries(stores.map(s => {
+        const recs = recommendations.filter(r => r.store === s)
+        return [s, ['Red', 'Amber'].filter(t => recs.some(r => r.urgency_tier === t))]
+      }))
+    : {}
 
   const toggleFilter = (key, val) => {
     setFilters(prev => {
@@ -25,6 +39,22 @@ export default function Sidebar({
 
   const handleUpload = () => {
     if (posFile && invFile) onUpload(posFile, invFile)
+  }
+
+  const handleLookupFestival = async () => {
+    if (!festInput.trim()) return
+    setFestLooking(true)
+    try {
+      const data = await detectFestivals(festYear, festRegion, festInput.trim(), seasonDates)
+      const newFests = (data.festivals || []).filter(
+        f => !festivals.some(e => e.name.toLowerCase() === f.name.toLowerCase())
+      )
+      if (newFests.length) {
+        setFestivals(prev => [...prev, ...newFests])
+        setFestInput('')
+      }
+    } catch (e) { /* silent */ }
+    finally { setFestLooking(false) }
   }
 
   const handleExport = async () => {
@@ -162,15 +192,27 @@ export default function Sidebar({
             </div>
 
             <div style={{ fontSize: '0.74rem', color: 'var(--text-dim)', marginBottom: 4 }}>Store</div>
-            <div className="multi-select" style={{ marginBottom: 10 }}>
+            <div className="multi-select" style={{ marginBottom: 10, flexDirection: 'column', alignItems: 'flex-start' }}>
               {stores.map(s => (
-                <button
-                  key={s}
-                  className={`chip ${filters.store.includes(s) ? 'active' : ''}`}
-                  onClick={() => toggleFilter('store', s)}
-                >
-                  {s}
-                </button>
+                <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <button
+                    className={`chip ${filters.store.includes(s) ? 'active' : ''}`}
+                    onClick={() => toggleFilter('store', s)}
+                  >
+                    {s}
+                  </button>
+                  {onShowPoster && storeTierSets[s]?.map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      className={`sp-trigger-btn ${t.toLowerCase()}`}
+                      onClick={(e) => { e.stopPropagation(); onShowPoster(s, t) }}
+                      title={`View ${t} poster`}
+                    >
+                      🖼
+                    </button>
+                  ))}
+                </div>
               ))}
             </div>
 
@@ -186,6 +228,94 @@ export default function Sidebar({
                 </button>
               ))}
             </div>
+          </div>
+
+          <hr className="sidebar-divider" />
+
+          {/* Festival Boosts */}
+          <div className="sidebar-section">
+            <span className="sidebar-label">🎉 Festival Boosts</span>
+            <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+              <select
+                value={festRegion}
+                onChange={e => setFestRegion(e.target.value)}
+                style={{ flex: 1, fontSize: '0.72rem', padding: '4px 6px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+              >
+                <option>All India</option>
+                <option>North India</option>
+                <option>South India</option>
+                <option>East India</option>
+                <option>West India</option>
+              </select>
+              <input
+                type="number"
+                value={festYear}
+                onChange={e => setFestYear(Number(e.target.value))}
+                min={2024} max={2030}
+                style={{ width: 60, fontSize: '0.72rem', padding: '4px 6px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+              />
+            </div>
+            <button
+              className="btn btn-ghost"
+              style={{ marginBottom: 8, fontSize: '0.73rem' }}
+              onClick={() => onDetectFestivals(festYear, festRegion)}
+              disabled={festivalDetecting || loading}
+            >
+              {festivalDetecting ? '🔍 Detecting…' : '🤖 Auto-detect Festivals'}
+            </button>
+
+            <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
+              <input
+                type="text"
+                placeholder="Type festival name…"
+                value={festInput}
+                onChange={e => setFestInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleLookupFestival()}
+                style={{ flex: 1, fontSize: '0.72rem', padding: '5px 8px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+              />
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ padding: '4px 10px', fontSize: '0.72rem', whiteSpace: 'nowrap' }}
+                onClick={handleLookupFestival}
+                disabled={festLooking || !festInput.trim()}
+              >
+                {festLooking ? '…' : '➕ Add'}
+              </button>
+            </div>
+
+            {festivals.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginBottom: 8 }}>
+                {festivals.map((fest, i) => (
+                  <div key={i} className="fest-row">
+                    <input
+                      type="checkbox"
+                      checked={fest.enabled}
+                      onChange={() => setFestivals(prev => prev.map((f, j) => j === i ? { ...f, enabled: !f.enabled } : f))}
+                      style={{ accentColor: 'var(--accent)', marginRight: 6 }}
+                    />
+                    <span className="fest-name">{fest.name}</span>
+                    <span className="fest-month">{MONTH_NAMES[(fest.month || 1) - 1]} {fest.year}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFestivals(prev => prev.filter((_, j) => j !== i))}
+                      style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '0.7rem', padding: 0, marginLeft: 'auto' }}
+                    >✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {festivals.length > 0 && (
+              <button
+                className="btn btn-primary"
+                style={{ fontSize: '0.75rem' }}
+                onClick={onApplyFestivals}
+                disabled={loading}
+              >
+                {loading ? 'Applying…' : '✅ Apply Festival Boosts'}
+              </button>
+            )}
           </div>
 
           <hr className="sidebar-divider" />

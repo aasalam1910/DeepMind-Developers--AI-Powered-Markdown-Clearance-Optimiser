@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Premium Poster Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=Montserrat:wght@300;400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0a0a0f;
+  font-family: 'Montserrat', sans-serif;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+.page-title { color: #94a3b8; font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 32px; text-align: center; }
+
+.stage { display: flex; gap: 36px; flex-wrap: wrap; justify-content: center; }
+
+/* ───────────────────────────────────
+   SHARED POSTER SHELL
+─────────────────────────────────── */
+.poster {
+  width: 300px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+/* ───────────────────────────────────
+   RED POSTER
+─────────────────────────────────── */
+.p-red { background: #fff; }
+
+.p-red .hero {
+  height: 200px;
+  background: #C0392B;
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+/* Big decorative circle */
+.p-red .hero::before {
+  content: '';
+  position: absolute;
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  top: -80px; right: -80px;
+}
+.p-red .hero::after {
+  content: '';
+  position: absolute;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  bottom: -50px; left: -40px;
+}
+.p-red .hero-inner {
+  position: relative; z-index: 2;
+  text-align: center;
+}
+.p-red .hero-badge {
+  display: inline-block;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.9);
+  font-size: 0.5rem; letter-spacing: 3px; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 30px; margin-bottom: 10px;
+}
+.p-red .hero-pct {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 6rem; color: #fff; line-height: 0.9;
+  text-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
+}
+.p-red .hero-off {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; color: rgba(255,255,255,0.85);
+  font-style: italic; letter-spacing: 4px;
+  margin-top: 2px;
+}
+/* Corner tag */
+.p-red .corner-tag {
+  position: absolute; top: 0; left: 0;
+  background: #1a1a1a; color: #fff;
+  font-size: 0.5rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  padding: 6px 16px 6px 12px;
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+}
+
+.p-red .body { padding: 20px 22px 22px; background: #fff; }
+
+.p-red .store-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.p-red .store-name-tag {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px;
+}
+.p-red .urgency-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #C0392B;
+  box-shadow: 0 0 8px #C0392B;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.p-red .headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem; color: #1a1a1a; letter-spacing: 1.5px;
+  line-height: 1; margin-bottom: 6px;
+}
+.p-red .headline span { color: #C0392B; }
+
+.p-red .subline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; font-style: italic; color: #888; margin-bottom: 14px;
+}
+
+.p-red .rule { height: 2px; background: linear-gradient(90deg,#C0392B 0%,#ff6b6b 50%,transparent 100%); margin-bottom: 14px; border-radius: 2px; }
+
+.p-red .tagline-box {
+  background: #fdf0ef; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;
+}
+.p-red .tagline-text { font-size: 0.72rem; color: #333; line-height: 1.6; }
+.p-red .tagline-text strong { color: #C0392B; }
+
+.p-red .stats-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.p-red .stat-box {
+  flex: 1; border: 1.5px solid #f0d0ce; border-radius: 8px; padding: 9px 6px; text-align: center;
+}
+.p-red .stat-n { font-family: 'Bebas Neue'; font-size: 1.1rem; color: #C0392B; letter-spacing: 1px; }
+.p-red .stat-l { font-size: 0.5rem; color: #bbb; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
+
+.p-red .cta {
+  width: 100%; background: #C0392B; color: #fff;
+  border: none; border-radius: 8px; padding: 12px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s;
+}
+.p-red .cta:hover { background: #a93226; }
+
+/* ───────────────────────────────────
+   AMBER POSTER
+─────────────────────────────────── */
+.p-amb { background: #fffdf5; }
+
+.p-amb .hero {
+  height: 200px;
+  background: linear-gradient(140deg, #1a1200 0%, #3d2800 40%, #7c4f00 70%, #c88b00 100%);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.p-amb .hero::before {
+  content: '';
+  position: absolute;
+  width: 280px; height: 280px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,158,11,0.25) 0%, transparent 70%);
+  top: -60px; right: -60px;
+}
+.p-amb .hero::after {
+  content: '';
+  position: absolute;
+  width: 120px; height: 120px; border-radius: 50%;
+  background: rgba(245,158,11,0.1);
+  bottom: -30px; left: -20px;
+}
+/* Thin gold lines decoration */
+.p-amb .hero-lines {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(45deg, rgba(245,158,11,0.06) 1px, transparent 1px),
+    linear-gradient(-45deg, rgba(245,158,11,0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+.p-amb .hero-inner { position: relative; z-index: 2; text-align: center; }
+.p-amb .hero-badge {
+  display: inline-block;
+  border: 1.5px solid rgba(245,158,11,0.6);
+  color: #fbbf24;
+  font-size: 0.5rem; letter-spacing: 3px; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 30px; margin-bottom: 10px;
+}
+.p-amb .hero-pct {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 6rem; color: #fbbf24; line-height: 0.9;
+  text-shadow: 0 0 40px rgba(245,158,11,0.6), 0 8px 32px rgba(0,0,0,0.4);
+  letter-spacing: 2px;
+}
+.p-amb .hero-off {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; color: rgba(251,191,36,0.8);
+  font-style: italic; letter-spacing: 4px; margin-top: 2px;
+}
+.p-amb .corner-tag {
+  position: absolute; top: 0; left: 0;
+  background: #d97706; color: #fff;
+  font-size: 0.5rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  padding: 6px 16px 6px 12px;
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+}
+
+.p-amb .body { padding: 20px 22px 22px; }
+
+.p-amb .store-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.p-amb .store-name-tag {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 700; color: #1a1a1a; letter-spacing: 0.5px;
+}
+.p-amb .urgency-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #d97706;
+  box-shadow: 0 0 8px #d97706;
+  animation: pulse 1.8s infinite;
+}
+
+.p-amb .headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem; color: #1a1a1a; letter-spacing: 1.5px;
+  line-height: 1; margin-bottom: 6px;
+}
+.p-amb .headline span { color: #d97706; }
+
+.p-amb .subline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; font-style: italic; color: #888; margin-bottom: 14px;
+}
+
+.p-amb .rule { height: 2px; background: linear-gradient(90deg, #d97706 0%, #fbbf24 50%, transparent 100%); margin-bottom: 14px; border-radius: 2px; }
+
+.p-amb .tagline-box {
+  background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;
+}
+.p-amb .tagline-text { font-size: 0.72rem; color: #333; line-height: 1.6; }
+.p-amb .tagline-text strong { color: #d97706; }
+
+.p-amb .stats-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.p-amb .stat-box {
+  flex: 1; border: 1.5px solid #fde68a; border-radius: 8px; padding: 9px 6px; text-align: center;
+}
+.p-amb .stat-n { font-family: 'Bebas Neue'; font-size: 1.1rem; color: #d97706; letter-spacing: 1px; }
+.p-amb .stat-l { font-size: 0.5rem; color: #bbb; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
+
+.p-amb .cta {
+  width: 100%; background: linear-gradient(135deg, #d97706, #b45309);
+  color: #fff; border: none; border-radius: 8px; padding: 12px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: opacity 0.2s;
+}
+.p-amb .cta:hover { opacity: 0.9; }
+
+/* ───────────────────────────────────
+   SIDEBAR PREVIEW
+─────────────────────────────────── */
+.sidebar-preview { margin-top: 40px; text-align: center; }
+.sidebar-preview h3 { color: #475569; font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.chip-wrap { display: inline-flex; flex-direction: column; gap: 8px; background: #111827; padding: 16px 20px; border-radius: 12px; border: 1px solid #1f2937; }
+.chip-row { display: flex; align-items: center; gap: 8px; }
+.chip { padding: 6px 14px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; border: 1px solid; }
+.chip.r { background: rgba(192,57,43,0.12); border-color: rgba(192,57,43,0.45); color: #e87c74; }
+.chip.a { background: rgba(217,119,6,0.12); border-color: rgba(217,119,6,0.45); color: #fbbf24; }
+.chip.g { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); color: #6ee7b7; }
+.picon { padding: 6px 10px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; cursor: pointer; border: 1px solid; }
+.picon.r { background: rgba(192,57,43,0.2); border-color: #c0392b; color: #c0392b; }
+.picon.a { background: rgba(217,119,6,0.2); border-color: #d97706; color: #d97706; }
+.no-p { font-size: 0.6rem; color: #374151; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="page-title">Store Discount Poster — Premium Design</div>
+
+<div class="stage">
+
+  <!-- ═══ RED POSTER ═══ -->
+  <div class="poster p-red">
+    <div class="hero">
+      <div class="corner-tag">⚠ Clearance</div>
+      <div class="hero-inner">
+        <div class="hero-badge">Season-End Blowout</div>
+        <div class="hero-pct">40</div>
+        <div class="hero-off">% OFF</div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="store-row">
+        <div class="store-name-tag">Store Alpha</div>
+        <div class="urgency-dot"></div>
+      </div>
+      <div class="headline">FINAL<br><span>CLEARANCE</span> SALE</div>
+      <div class="subline">"Everything must go — before the season ends!"</div>
+      <div class="rule"></div>
+      <div class="tagline-box">
+        <div class="tagline-text">
+          🔥 <strong>Stock running out FAST</strong> — grab your favourites at jaw-dropping prices. Don't miss the biggest clearance of the season. Last chance!
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-n">12</div><div class="stat-l">SKUs</div></div>
+        <div class="stat-box"><div class="stat-n">8 Days</div><div class="stat-l">Act By</div></div>
+        <div class="stat-box"><div class="stat-n">3</div><div class="stat-l">Categories</div></div>
+      </div>
+      <button class="cta">🖨 &nbsp;Print This Poster</button>
+    </div>
+  </div>
+
+  <!-- ═══ AMBER POSTER ═══ -->
+  <div class="poster p-amb">
+    <div class="hero">
+      <div class="hero-lines"></div>
+      <div class="corner-tag">⚡ Limited Offer</div>
+      <div class="hero-inner">
+        <div class="hero-badge">Seasonal Savings</div>
+        <div class="hero-pct">20</div>
+        <div class="hero-off">% OFF</div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="store-row">
+        <div class="store-name-tag">Store Beta</div>
+        <div class="urgency-dot"></div>
+      </div>
+      <div class="headline">SPECIAL<br><span>SAVINGS</span> EVENT</div>
+      <div class="subline">"Fresh deals, real value — while stocks last!"</div>
+      <div class="rule"></div>
+      <div class="tagline-box">
+        <div class="tagline-text">
+          ⚡ <strong>Limited-time deal</strong> — save 20% on handpicked items before they're gone. Quality products, unbeatable prices. Act now!
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-n">7</div><div class="stat-l">SKUs</div></div>
+        <div class="stat-box"><div class="stat-n">15 Days</div><div class="stat-l">Act By</div></div>
+        <div class="stat-box"><div class="stat-n">2</div><div class="stat-l">Categories</div></div>
+      </div>
+      <button class="cta">🖨 &nbsp;Print This Poster</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sidebar preview -->
+<div class="sidebar-preview">
+  <h3>Sidebar — Store Chips with Poster Button</h3>
+  <div class="chip-wrap">
+    <div class="chip-row">
+      <div class="chip r">Store Alpha</div>
+      <div class="picon r">🖼 Poster</div>
+    </div>
+    <div class="chip-row">
+      <div class="chip a">Store Beta</div>
+      <div class="picon a">🖼 Poster</div>
+    </div>
+    <div class="chip-row">
+      <div class="chip g">Store Gamma</div>
+      <span class="no-p">Green — no poster</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
