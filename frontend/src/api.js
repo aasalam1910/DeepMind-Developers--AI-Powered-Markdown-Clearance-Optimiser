@@ -8,8 +8,16 @@ function seasonParams(seasonDates) {
   return qs ? `?${qs}` : ''
 }
 
-export async function loadSample(seasonDates) {
-  const res = await fetch(`${BASE}/api/recommend/sample${seasonParams(seasonDates)}`, { method: 'POST' })
+export async function loadSample(seasonDates, festivals = []) {
+  const res = await fetch(`${BASE}/api/recommend/sample`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      season_start: seasonDates?.start ?? null,
+      season_end:   seasonDates?.end   ?? null,
+      festivals:    festivals.filter(f => f.enabled),
+    }),
+  })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }))
     throw new Error(err.detail || 'Failed to load sample data')
@@ -17,14 +25,32 @@ export async function loadSample(seasonDates) {
   return res.json()
 }
 
-export async function uploadFiles(posFile, invFile, seasonDates) {
+export async function uploadFiles(posFile, invFile, seasonDates, festivals = []) {
   const form = new FormData()
   form.append('pos_file', posFile)
   form.append('inv_file', invFile)
+  form.append('festivals', JSON.stringify(festivals.filter(f => f.enabled)))
   const res = await fetch(`${BASE}/api/recommend${seasonParams(seasonDates)}`, { method: 'POST', body: form })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }))
     throw new Error(err.detail || 'Failed to process files')
+  }
+  return res.json()
+}
+
+export async function detectFestivals(year, region = 'India', festivalName = null, seasonDates = null) {
+  const body = { year, region }
+  if (festivalName)       body.festival_name = festivalName
+  if (seasonDates?.start) body.season_start  = seasonDates.start
+  if (seasonDates?.end)   body.season_end    = seasonDates.end
+  const res = await fetch(`${BASE}/api/festivals/detect`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(body),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }))
+    throw new Error(err.detail || 'Festival detection failed')
   }
   return res.json()
 }

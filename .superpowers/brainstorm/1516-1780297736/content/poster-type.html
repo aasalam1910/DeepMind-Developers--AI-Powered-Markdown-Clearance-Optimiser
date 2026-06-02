@@ -1,0 +1,93 @@
+<h2>What form should the "Store Discount Poster" take?</h2>
+<p class="subtitle">You want a quick visual showing which store has the least discount. Which format fits best?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f172a;padding:16px;border-radius:6px;font-family:monospace;">
+      <div style="color:#94a3b8;font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Store Discount Leaderboard</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:#10B981;font-weight:bold;width:16px">1</span>
+          <span style="color:#e2e8f0;flex:1;font-size:0.8rem">Store A</span>
+          <div style="height:10px;width:30px;background:#10B981;border-radius:3px"></div>
+          <span style="color:#10B981;font-size:0.75rem">8%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:#F59E0B;font-weight:bold;width:16px">2</span>
+          <span style="color:#e2e8f0;flex:1;font-size:0.8rem">Store B</span>
+          <div style="height:10px;width:50px;background:#F59E0B;border-radius:3px"></div>
+          <span style="color:#F59E0B;font-size:0.75rem">18%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:#EF4444;font-weight:bold;width:16px">3</span>
+          <span style="color:#e2e8f0;flex:1;font-size:0.8rem">Store C</span>
+          <div style="height:10px;width:80px;background:#EF4444;border-radius:3px"></div>
+          <span style="color:#EF4444;font-size:0.75rem">35%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:#EF4444;font-weight:bold;width:16px">4</span>
+          <span style="color:#e2e8f0;flex:1;font-size:0.8rem">Store D</span>
+          <div style="height:10px;width:110px;background:#EF4444;border-radius:3px"></div>
+          <span style="color:#EF4444;font-size:0.75rem">48%</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Ranked Bar List</h3>
+      <p>Horizontal progress bars ranking all stores from least to most discount. Color-coded Green → Red. Compact, scannable.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f172a;padding:16px;border-radius:6px;">
+      <div style="color:#94a3b8;font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Spotlight</div>
+      <div style="text-align:center;padding:8px 0;">
+        <div style="font-size:0.65rem;color:#94a3b8;margin-bottom:4px">LOWEST DISCOUNT</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#10B981">Store A</div>
+        <div style="font-size:2rem;font-weight:900;color:#10B981">8%</div>
+        <div style="font-size:0.65rem;color:#94a3b8;margin:6px 0">avg markdown across all SKUs</div>
+        <hr style="border-color:#1e293b;margin:10px 0">
+        <div style="font-size:0.65rem;color:#94a3b8;margin-bottom:4px">HIGHEST DISCOUNT</div>
+        <div style="font-size:1rem;font-weight:700;color:#EF4444">Store D — 48%</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Hero Spotlight Card</h3>
+      <p>Big bold callout of the best-performing store + worst performer. Poster-like, eye-catching. Great for demos and presentations.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f172a;padding:16px;border-radius:6px;">
+      <div style="color:#94a3b8;font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Store Health Grid</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <div style="background:#0c2a1a;border:1px solid #10B981;border-radius:6px;padding:8px;text-align:center;">
+          <div style="color:#10B981;font-weight:bold;font-size:0.85rem">Store A</div>
+          <div style="color:#10B981;font-size:1.1rem;font-weight:900">8%</div>
+          <div style="color:#10B981;font-size:0.6rem">✓ Healthy</div>
+        </div>
+        <div style="background:#2a1f0a;border:1px solid #F59E0B;border-radius:6px;padding:8px;text-align:center;">
+          <div style="color:#F59E0B;font-weight:bold;font-size:0.85rem">Store B</div>
+          <div style="color:#F59E0B;font-size:1.1rem;font-weight:900">18%</div>
+          <div style="color:#F59E0B;font-size:0.6rem">⚠ At Risk</div>
+        </div>
+        <div style="background:#2a0e0e;border:1px solid #EF4444;border-radius:6px;padding:8px;text-align:center;">
+          <div style="color:#EF4444;font-weight:bold;font-size:0.85rem">Store C</div>
+          <div style="color:#EF4444;font-size:1.1rem;font-weight:900">35%</div>
+          <div style="color:#EF4444;font-size:0.6rem">✗ Critical</div>
+        </div>
+        <div style="background:#2a0e0e;border:1px solid #EF4444;border-radius:6px;padding:8px;text-align:center;">
+          <div style="color:#EF4444;font-weight:bold;font-size:0.85rem">Store D</div>
+          <div style="color:#EF4444;font-size:1.1rem;font-weight:900">48%</div>
+          <div style="color:#EF4444;font-size:0.6rem">✗ Critical</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Store Health Grid</h3>
+      <p>Each store gets its own tile showing avg discount % and a health label. Visual at a glance — good for comparing multiple stores simultaneously.</p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Retail Poster Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@300;400;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; font-family: 'Inter', system-ui, sans-serif; padding: 32px 24px; min-height: 100vh; }
+  h2 { color: #e2e8f0; font-size: 1rem; margin-bottom: 4px; }
+  .sub { color: #64748b; font-size: 0.78rem; margin-bottom: 28px; }
+  .posters { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
+
+  /* ========= RED POSTER ========= */
+  .poster-red {
+    width: 300px;
+    background: #fdf6ee;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+  }
+
+  .red-top-stripe { background: #c0392b; height: 6px; }
+
+  .red-image-area {
+    height: 140px;
+    background: linear-gradient(135deg, #e8d5c4 0%, #f5e6d8 50%, #ddc9b4 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .red-image-area::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c0392b' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .clothing-icon {
+    font-size: 3.5rem;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+  }
+  .sale-ribbon {
+    position: absolute; top: 14px; right: -8px;
+    background: #c0392b; color: #fff;
+    font-size: 0.6rem; font-weight: 800; letter-spacing: 1.5px;
+    padding: 5px 18px 5px 12px;
+    text-transform: uppercase;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8% 100%);
+  }
+
+  .red-body { padding: 18px 20px 20px; }
+
+  .brand-name-red {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+    color: #c0392b; font-weight: 700; margin-bottom: 8px;
+  }
+
+  .red-headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.6rem; font-weight: 900; line-height: 1.1;
+    color: #1a1a1a; margin-bottom: 4px;
+  }
+  .red-headline span { color: #c0392b; }
+
+  .red-sub { font-size: 0.72rem; color: #888; font-style: italic; margin-bottom: 16px; }
+
+  .red-divider { height: 1px; background: linear-gradient(90deg, #c0392b, #e8d5c4); margin-bottom: 14px; }
+
+  .red-offer-box {
+    background: #c0392b;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .red-offer-box::after {
+    content: '';
+    position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+  }
+  .offer-label { color: rgba(255,255,255,0.75); font-size: 0.58rem; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 2px; }
+  .offer-pct { color: #fff; font-size: 2.8rem; font-weight: 900; line-height: 1; letter-spacing: -1px; }
+  .offer-pct span { font-size: 1.2rem; }
+  .offer-tagline { color: rgba(255,255,255,0.85); font-size: 0.68rem; margin-top: 4px; font-weight: 600; }
+
+  .red-copy { font-size: 0.72rem; color: #555; line-height: 1.5; margin-bottom: 14px; }
+  .red-copy strong { color: #c0392b; }
+
+  .red-stats { display: flex; gap: 6px; margin-bottom: 16px; }
+  .stat-pill { flex: 1; background: #fdf0eb; border: 1px solid #f0d0c4; border-radius: 8px; padding: 8px 6px; text-align: center; }
+  .stat-pill .sv { font-size: 0.9rem; font-weight: 800; color: #c0392b; }
+  .stat-pill .sl { font-size: 0.5rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.3px; margin-top: 1px; }
+
+  .red-btn { width: 100%; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 11px; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.8px; cursor: pointer; text-transform: uppercase; }
+
+
+  /* ========= AMBER POSTER ========= */
+  .poster-amber {
+    width: 300px;
+    background: #fffef9;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+  }
+
+  .amber-top { background: linear-gradient(90deg, #b7791f, #d97706, #f59e0b); height: 6px; }
+
+  .amber-image-area {
+    height: 140px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fef9c3 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .amber-image-area::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d97706' fill-opacity='0.07' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  .amber-ribbon {
+    position: absolute; top: 14px; right: -8px;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #fff; font-size: 0.6rem; font-weight: 800; letter-spacing: 1.5px;
+    padding: 5px 18px 5px 12px; text-transform: uppercase;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 8% 100%);
+  }
+
+  .amber-body { padding: 18px 20px 20px; }
+
+  .brand-name-amber {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+    color: #b7791f; font-weight: 700; margin-bottom: 8px;
+  }
+
+  .amber-headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.6rem; font-weight: 900; line-height: 1.1;
+    color: #1a1a1a; margin-bottom: 4px;
+  }
+  .amber-headline span { color: #d97706; }
+
+  .amber-sub { font-size: 0.72rem; color: #888; font-style: italic; margin-bottom: 16px; }
+
+  .amber-divider { height: 1px; background: linear-gradient(90deg, #d97706, #fef9c3); margin-bottom: 14px; }
+
+  .amber-offer-box {
+    background: linear-gradient(135deg, #b7791f 0%, #d97706 50%, #f59e0b 100%);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+    margin-bottom: 14px;
+    position: relative; overflow: hidden;
+  }
+  .amber-offer-box::after {
+    content: '';
+    position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+  }
+
+  .amber-stats { display: flex; gap: 6px; margin-bottom: 16px; }
+  .stat-pill-a { flex: 1; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 8px 6px; text-align: center; }
+  .stat-pill-a .sv { font-size: 0.9rem; font-weight: 800; color: #d97706; }
+  .stat-pill-a .sl { font-size: 0.5rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.3px; margin-top: 1px; }
+
+  .amber-copy { font-size: 0.72rem; color: #555; line-height: 1.5; margin-bottom: 14px; }
+  .amber-copy strong { color: #d97706; }
+
+  .amber-btn { width: 100%; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 11px; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.8px; cursor: pointer; text-transform: uppercase; }
+
+  /* ========= SIDEBAR PREVIEW ========= */
+  .sidebar-wrap { margin-top: 36px; }
+  .sidebar-wrap h3 { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .chip-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .chip { padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: 1px solid; }
+  .chip.rc  { background: rgba(192,57,43,0.12); border-color: rgba(192,57,43,0.4); color: #e57368; }
+  .chip.ac  { background: rgba(217,119,6,0.12); border-color: rgba(217,119,6,0.4); color: #fbbf24; }
+  .chip.gc  { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); color: #6ee7b7; }
+  .picon { padding: 5px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer; border: 1px solid; }
+  .picon.rc { background: rgba(192,57,43,0.18); border-color: #c0392b; color: #c0392b; }
+  .picon.ac { background: rgba(217,119,6,0.18); border-color: #d97706; color: #d97706; }
+  .no-p { font-size: 0.62rem; color: #334155; font-style: italic; }
+</style>
+</head>
+<body>
+
+<h2>Store Poster — Retail Style</h2>
+<p class="sub">Clean, professional, boutique-quality. Light backgrounds, elegant typography.</p>
+
+<div class="posters">
+
+  <!-- RED POSTER -->
+  <div class="poster-red">
+    <div class="red-top-stripe"></div>
+    <div class="red-image-area">
+      <div class="clothing-icon">👗</div>
+      <div class="sale-ribbon">CLEARANCE</div>
+    </div>
+    <div class="red-body">
+      <div class="brand-name-red">— Store Alpha —</div>
+      <div class="red-headline">Season-End<br><span>Clearance</span> Sale</div>
+      <div class="red-sub">"Everything must go — before the season ends!"</div>
+      <div class="red-divider"></div>
+      <div class="red-offer-box">
+        <div class="offer-label">Flat Discount</div>
+        <div class="offer-pct">40<span>% OFF</span></div>
+        <div class="offer-tagline">🔥 Stock running out FAST — Grab yours now!</div>
+      </div>
+      <div class="red-copy">
+        Unbeatable deals on <strong>12 SKUs</strong> across <strong>3 categories</strong>.
+        Limited inventory. First come, first served. Don't wait — this offer ends soon!
+      </div>
+      <div class="red-stats">
+        <div class="stat-pill"><div class="sv">12</div><div class="sl">SKUs</div></div>
+        <div class="stat-pill"><div class="sv">8d</div><div class="sl">Act By</div></div>
+        <div class="stat-pill"><div class="sv">3</div><div class="sl">Categories</div></div>
+      </div>
+      <button class="red-btn">🖨 &nbsp;Print Poster</button>
+    </div>
+  </div>
+
+  <!-- AMBER POSTER -->
+  <div class="poster-amber">
+    <div class="amber-top"></div>
+    <div class="amber-image-area">
+      <div class="clothing-icon">🛍️</div>
+      <div class="amber-ribbon">LIMITED OFFER</div>
+    </div>
+    <div class="amber-body">
+      <div class="brand-name-amber">— Store Beta —</div>
+      <div class="amber-headline">Special<br><span>Savings</span> Offer</div>
+      <div class="amber-sub">"Fresh deals, real value — while stocks last!"</div>
+      <div class="amber-divider"></div>
+      <div class="amber-offer-box">
+        <div class="offer-label">Exclusive Discount</div>
+        <div class="offer-pct">20<span>% OFF</span></div>
+        <div class="offer-tagline">⚡ Limited time — act before it's too late!</div>
+      </div>
+      <div class="amber-copy">
+        Save big on <strong>7 handpicked SKUs</strong> across <strong>2 categories</strong>.
+        Quality products at unbeatable prices. Offer valid while stocks last!
+      </div>
+      <div class="amber-stats">
+        <div class="stat-pill-a"><div class="sv">7</div><div class="sl">SKUs</div></div>
+        <div class="stat-pill-a"><div class="sv">15d</div><div class="sl">Act By</div></div>
+        <div class="stat-pill-a"><div class="sv">2</div><div class="sl">Categories</div></div>
+      </div>
+      <button class="amber-btn">🖨 &nbsp;Print Poster</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sidebar chips -->
+<div class="sidebar-wrap">
+  <h3>Sidebar store chips — with Poster button</h3>
+  <div class="chip-row">
+    <div class="chip rc">Store Alpha</div>
+    <div class="picon rc">🖼 Poster</div>
+  </div>
+  <div class="chip-row">
+    <div class="chip ac">Store Beta</div>
+    <div class="picon ac">🖼 Poster</div>
+  </div>
+  <div class="chip-row">
+    <div class="chip gc">Store Gamma</div>
+    <span class="no-p">Green — no poster</span>
+  </div>
+</div>
+
+</body>
+</html>

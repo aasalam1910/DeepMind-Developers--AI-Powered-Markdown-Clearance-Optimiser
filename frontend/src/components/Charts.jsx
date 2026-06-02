@@ -1,16 +1,12 @@
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
-  ScatterChart, Scatter, ZAxis, CartesianGrid,
+  CartesianGrid, ReferenceLine,
 } from 'recharts'
 
 const TIER_COLORS = { Red: '#EF4444', Amber: '#F59E0B', Green: '#10B981' }
-const CHART_STYLE = {
-  background: '#161B27',
-  fontSize: 11,
-  fontFamily: 'Inter, sans-serif',
-}
-const AXIS_STYLE = { fill: '#64748B', fontSize: 11 }
-const GRID_STYLE = { stroke: '#2A3045', strokeDasharray: '3 3' }
+const CHART_STYLE = { background: '#161B27', fontSize: 11, fontFamily: 'Inter, sans-serif' }
+const AXIS_STYLE  = { fill: '#64748B', fontSize: 11 }
+const GRID_STYLE  = { stroke: '#2A3045', strokeDasharray: '3 3' }
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
@@ -30,7 +26,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 }
 
 function BarChartCard({ recommendations }) {
-  // Aggregate avg sell-through per store × tier
   const agg = {}
   for (const r of recommendations) {
     const k = r.store
@@ -63,49 +58,85 @@ function BarChartCard({ recommendations }) {
   )
 }
 
-function ScatterCard({ recommendations }) {
-  const byTier = { Red: [], Amber: [], Green: [] }
-  for (const r of recommendations) {
-    if (r.days_of_cover != null && r.velocity_14d != null) {
-      byTier[r.urgency_tier]?.push({
-        x: +r.velocity_14d.toFixed(2),
-        y: +r.days_of_cover.toFixed(1),
-        z: r.stock_on_hand,
-        sku: r.sku,
-        store: r.store,
-      })
+function CoverageRiskCard({ recommendations }) {
+  // Bucket days_of_cover into readable ranges, count SKUs per bucket per tier
+  const BUCKETS = [
+    { label: '0–30d',   min: 0,   max: 30   },
+    { label: '30–90d',  min: 30,  max: 90   },
+    { label: '90–180d', min: 90,  max: 180  },
+    { label: '180–365d',min: 180, max: 365  },
+    { label: '365d+',   min: 365, max: Infinity },
+  ]
+
+  const data = BUCKETS.map(b => {
+    const row = { label: b.label, Red: 0, Amber: 0, Green: 0 }
+    for (const r of recommendations) {
+      const doc = r.days_of_cover
+      if (doc == null) continue
+      if (doc >= b.min && doc < b.max) row[r.urgency_tier]++
     }
-  }
+    return row
+  })
+
+  // Season days remaining for reference line
+  const seasonDaysRemaining = Math.max(
+    0,
+    Math.round((new Date('2026-06-30') - new Date()) / 86_400_000)
+  )
+
+  // Find which bucket the season end falls in for a reference label
+  const refBucket = BUCKETS.findIndex(
+    b => seasonDaysRemaining >= b.min && seasonDaysRemaining < b.max
+  )
+  const refLabel = refBucket >= 0 ? BUCKETS[refBucket].label : null
 
   return (
     <div className="chart-card">
-      <div className="chart-title">Days of Cover vs Velocity</div>
+      <div className="chart-title">
+        Stock Coverage Distribution
+        <span style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 400, marginLeft: 8 }}>
+          SKUs by days-of-cover range
+        </span>
+      </div>
       <ResponsiveContainer width="100%" height={240}>
-        <ScatterChart style={CHART_STYLE} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
+        <BarChart data={data} style={CHART_STYLE} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
           <CartesianGrid {...GRID_STYLE} />
-          <XAxis dataKey="x" name="Velocity/day" tick={AXIS_STYLE} axisLine={false} tickLine={false} label={{ value: 'Velocity (u/day)', position: 'insideBottom', offset: -2, fill: '#64748B', fontSize: 10 }} />
-          <YAxis dataKey="y" name="Days Cover" tick={AXIS_STYLE} axisLine={false} tickLine={false} />
-          <ZAxis dataKey="z" range={[40, 400]} />
+          <XAxis dataKey="label" tick={AXIS_STYLE} axisLine={false} tickLine={false} />
+          <YAxis tick={AXIS_STYLE} axisLine={false} tickLine={false} allowDecimals={false} />
           <Tooltip
-            cursor={{ strokeDasharray: '3 3', stroke: '#2A3045' }}
-            content={({ active, payload }) => {
+            content={({ active, payload, label }) => {
               if (!active || !payload?.length) return null
-              const d = payload[0].payload
+              const total = payload.reduce((s, p) => s + (p.value || 0), 0)
               return (
                 <div style={{ background: '#1E2535', border: '1px solid #2A3045', borderRadius: 8, padding: '10px 14px', fontSize: 12 }}>
-                  <div style={{ color: '#F1F5F9', fontWeight: 600, marginBottom: 4 }}>{d.sku} @ {d.store}</div>
-                  <div style={{ color: '#94A3B8' }}>Velocity: <strong>{d.x}</strong> u/day</div>
-                  <div style={{ color: '#94A3B8' }}>Days Cover: <strong>{d.y}</strong></div>
-                  <div style={{ color: '#94A3B8' }}>Stock: <strong>{d.z}</strong></div>
+                  <div style={{ color: '#F1F5F9', fontWeight: 600, marginBottom: 6 }}>{label} coverage</div>
+                  {payload.map((p, i) => (
+                    <div key={i} style={{ color: p.fill, marginBottom: 2 }}>
+                      {p.name}: <strong>{p.value} SKUs</strong>
+                    </div>
+                  ))}
+                  <div style={{ color: '#64748B', marginTop: 4, borderTop: '1px solid #2A3045', paddingTop: 4 }}>
+                    Total: <strong style={{ color: '#F1F5F9' }}>{total}</strong>
+                  </div>
                 </div>
               )
             }}
+            cursor={{ fill: '#ffffff08' }}
           />
           <Legend wrapperStyle={{ fontSize: 11, color: '#94A3B8' }} />
           {['Red','Amber','Green'].map(t => (
-            <Scatter key={t} name={t} data={byTier[t]} fill={TIER_COLORS[t]} fillOpacity={0.8} />
+            <Bar key={t} dataKey={t} name={t} stackId="a" fill={TIER_COLORS[t]} maxBarSize={52} />
           ))}
-        </ScatterChart>
+          {refLabel && (
+            <ReferenceLine
+              x={refLabel}
+              stroke="#6366F1"
+              strokeDasharray="5 3"
+              strokeWidth={2}
+              label={{ value: `Season ends ~here`, position: 'top', fill: '#6366F1', fontSize: 10 }}
+            />
+          )}
+        </BarChart>
       </ResponsiveContainer>
     </div>
   )
@@ -114,8 +145,8 @@ function ScatterCard({ recommendations }) {
 export default function Charts({ recommendations }) {
   return (
     <div className="charts-row">
-      <BarChartCard recommendations={recommendations} />
-      <ScatterCard  recommendations={recommendations} />
+      <BarChartCard      recommendations={recommendations} />
+      <CoverageRiskCard  recommendations={recommendations} />
     </div>
   )
 }

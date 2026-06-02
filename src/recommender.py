@@ -1,3 +1,4 @@
+import calendar as _cal
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
@@ -9,14 +10,66 @@ from config.settings import (
 )
 
 
-def generate_recommendations(features_df: pd.DataFrame, season_end_date: str | None = None) -> pd.DataFrame:
+def _compute_festival_info(row: pd.Series, festival_boosts: list, season_start: date, season_end: date) -> tuple:
+    """Return (combined_boost, festival_names) combining ALL active festivals in the season window."""
+    combined_boost = 1.0
+    festival_names = []
+    category = str(row.get("category", "Default"))
+    for fest in festival_boosts:
+        if not fest.get("enabled", True):
+            continue
+        month = fest.get("month")
+        year  = fest.get("year", season_end.year)
+        if not month:
+            continue
+        try:
+            last_day = _cal.monthrange(int(year), int(month))[1]
+            f_start  = date(int(year), int(month), 1)
+            f_end    = date(int(year), int(month), last_day)
+        except (ValueError, TypeError):
+            continue
+        # Festival month overlaps with the season window
+        if f_start <= season_end and f_end >= season_start:
+            boosts = fest.get("category_boosts", {})
+            boost  = boosts.get(category, boosts.get("Default", 1.0))
+            if boost > 1.0:
+                combined_boost *= boost          # compound all active festivals
+                festival_names.append(fest.get("name", ""))
+    # Cap combined boost at 3.0x to avoid extreme reductions
+    combined_boost = min(combined_boost, 3.0)
+    return combined_boost, " + ".join(festival_names)
+
+
+def generate_recommendations(features_df: pd.DataFrame, season_end_date: str | None = None, festival_boosts: list | None = None) -> pd.DataFrame:
     df = features_df.copy()
     today = date.today()
     season_end = pd.Timestamp(season_end_date or SEASON_END_DATE)
     season_days_remaining = max((season_end - pd.Timestamp(today)).days, 0)
+    season_end_date_obj   = season_end.date()
+    season_start_date_obj = (season_end - pd.Timedelta(days=120)).date()  # fallback; features may carry actual start
+
+    # --- Festival velocity boost ---
+    active_festivals = [f for f in (festival_boosts or []) if f.get("enabled", True)]
+    if active_festivals:
+        info = df.apply(
+            lambda r: _compute_festival_info(r, active_festivals, season_start_date_obj, season_end_date_obj), axis=1
+        )
+        df["festival_boost"] = [i[0] for i in info]
+        df["festival_name"]  = [i[1] for i in info]
+        # Recalculate days_of_cover using boosted velocity for tier assignment
+        df["_doc_for_tier"] = df.apply(
+            lambda r: (r["stock_on_hand"] / (r["velocity_14d"] * r["festival_boost"]))
+            if r["velocity_14d"] > 0 and r["festival_boost"] > 1.0
+            else r["days_of_cover"],
+            axis=1,
+        )
+    else:
+        df["festival_boost"] = 1.0
+        df["festival_name"]  = ""
+        df["_doc_for_tier"]  = df["days_of_cover"]
 
     def _assign_tier(row: pd.Series) -> str:
-        doc = row["days_of_cover"]
+        doc = row["_doc_for_tier"]
         stp = row["sell_through_pct"]
         if pd.isna(doc):
             return "Green"
@@ -152,5 +205,50 @@ def generate_recommendations(features_df: pd.DataFrame, season_end_date: str | N
     df["markdown_reason"] = details["markdown_reason"]
     df["markdown_calc"]   = details["markdown_calc"]
     df["action_by_date"]  = df.apply(_assign_action_date, axis=1)
+    df["velocity_lift"] = df["category"].map(CATEGORY_LIFT_MULTIPLIERS).fillna(
+        CATEGORY_LIFT_MULTIPLIERS["Default"]
+    )
+    df.drop(columns=["_doc_for_tier"], inplace=True, errors="ignore")
+
+    # --- Apply festival markdown reduction ---
+    # Higher festival demand = same stock clears with a smaller discount
+    if active_festivals:
+        def _festival_markdown(row):
+            boost     = row.get("festival_boost", 1.0)
+            orig_pct  = row.get("markdown_pct", 0)
+            tier      = row.get("urgency_tier", "Green")
+            fest_name = row.get("festival_name", "")
+            if boost <= 1.0 or orig_pct == 0:
+                return pd.Series({
+                    "markdown_pct":    orig_pct,
+                    "markdown_band":   row["markdown_band"],
+                    "markdown_reason": row["markdown_reason"],
+                    "urgency_tier":    tier,
+                })
+            # Reduction: 1.3x → 15%, 1.5x → 25%, 1.6x → 30%, capped at 40%
+            reduction   = min(0.40, (boost - 1.0) * 0.5)
+            new_pct     = max(5, round(orig_pct * (1 - reduction)))
+            band_lo     = max(5,  new_pct - 5)
+            band_hi     = min(70, new_pct + 5)
+            new_reason  = (
+                row["markdown_reason"] +
+                f" 🎉 {fest_name} demand boost ({boost}x) applied — markdown reduced from {orig_pct}% to {new_pct}%."
+            )
+            # Downgrade tier if markdown dropped into lower band
+            new_tier = tier
+            if tier == "Red"   and new_pct <= 20: new_tier = "Amber"
+            if tier == "Amber" and new_pct <= 10: new_tier = "Green"
+            return pd.Series({
+                "markdown_pct":    new_pct,
+                "markdown_band":   f"{band_lo}-{band_hi}%",
+                "markdown_reason": new_reason,
+                "urgency_tier":    new_tier,
+            })
+
+        fest_adjustments = df.apply(_festival_markdown, axis=1)
+        df["markdown_pct"]    = fest_adjustments["markdown_pct"]
+        df["markdown_band"]   = fest_adjustments["markdown_band"]
+        df["markdown_reason"] = fest_adjustments["markdown_reason"]
+        df["urgency_tier"]    = fest_adjustments["urgency_tier"]
 
     return df
