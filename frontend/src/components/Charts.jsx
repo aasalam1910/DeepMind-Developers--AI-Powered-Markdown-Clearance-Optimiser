@@ -4,20 +4,21 @@ import {
 } from 'recharts'
 
 const TIER_COLORS = { Red: '#EF4444', Amber: '#F59E0B', Green: '#10B981' }
-const CHART_STYLE = { background: '#161B27', fontSize: 11, fontFamily: 'Inter, sans-serif' }
-const AXIS_STYLE  = { fill: '#64748B', fontSize: 11 }
-const GRID_STYLE  = { stroke: '#2A3045', strokeDasharray: '3 3' }
+const CHART_STYLE = { fontSize: 11, fontFamily: 'Inter, sans-serif' }
+const AXIS_STYLE  = { fill: '#94A3B8', fontSize: 11 }
+const GRID_STYLE  = { stroke: '#E5E7EB', strokeDasharray: '3 3' }
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
     <div style={{
-      background: '#1E2535', border: '1px solid #2A3045',
-      borderRadius: 8, padding: '10px 14px', fontSize: 12,
+      background: '#0F172A', border: '1px solid #1E293B',
+      borderRadius: 10, padding: '10px 14px', fontSize: 12,
+      boxShadow: '0 10px 30px rgba(15,23,42,0.18)',
     }}>
-      {label && <div style={{ color: '#F1F5F9', fontWeight: 600, marginBottom: 6 }}>{label}</div>}
+      {label && <div style={{ color: '#F8FAFC', fontWeight: 700, marginBottom: 6 }}>{label}</div>}
       {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color || '#94A3B8', marginBottom: 2 }}>
+        <div key={i} style={{ color: p.color || '#CBD5E1', marginBottom: 2 }}>
           {p.name}: <strong>{typeof p.value === 'number' ? p.value.toFixed(1) : p.value}</strong>
         </div>
       ))}
@@ -41,14 +42,14 @@ function BarChartCard({ recommendations }) {
 
   return (
     <div className="chart-card">
-      <div className="chart-title">Avg Sell-Through Rate by Store</div>
+      <div className="chart-title"><span style={{ color: '#6366F1', fontWeight: 700 }}>📊</span> Avg Sell-Through Rate by Store</div>
       <ResponsiveContainer width="100%" height={240}>
         <BarChart data={data} style={CHART_STYLE} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
           <CartesianGrid {...GRID_STYLE} />
           <XAxis dataKey="store" tick={AXIS_STYLE} axisLine={false} tickLine={false} />
           <YAxis tick={AXIS_STYLE} axisLine={false} tickLine={false} unit="%" />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: '#ffffff08' }} />
-          <Legend wrapperStyle={{ fontSize: 11, color: '#94A3B8' }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99,102,241,0.06)' }} />
+          <Legend wrapperStyle={{ fontSize: 11, color: '#475569' }} />
           {['Red','Amber','Green'].map(t => (
             <Bar key={t} dataKey={t} fill={TIER_COLORS[t]} radius={[3,3,0,0]} maxBarSize={24} />
           ))}
@@ -93,8 +94,9 @@ function CoverageRiskCard({ recommendations }) {
   return (
     <div className="chart-card">
       <div className="chart-title">
+        <span style={{ color: '#6366F1', fontWeight: 700 }}>📦</span>
         Stock Coverage Distribution
-        <span style={{ fontSize: '0.7rem', color: '#64748B', fontWeight: 400, marginLeft: 8 }}>
+        <span style={{ fontSize: '0.68rem', color: '#94A3B8', fontWeight: 500, marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>
           SKUs by days-of-cover range
         </span>
       </div>
@@ -108,22 +110,22 @@ function CoverageRiskCard({ recommendations }) {
               if (!active || !payload?.length) return null
               const total = payload.reduce((s, p) => s + (p.value || 0), 0)
               return (
-                <div style={{ background: '#1E2535', border: '1px solid #2A3045', borderRadius: 8, padding: '10px 14px', fontSize: 12 }}>
-                  <div style={{ color: '#F1F5F9', fontWeight: 600, marginBottom: 6 }}>{label} coverage</div>
+                <div style={{ background: '#0F172A', border: '1px solid #1E293B', borderRadius: 10, padding: '10px 14px', fontSize: 12, boxShadow: '0 10px 30px rgba(15,23,42,0.18)' }}>
+                  <div style={{ color: '#F8FAFC', fontWeight: 700, marginBottom: 6 }}>{label} coverage</div>
                   {payload.map((p, i) => (
                     <div key={i} style={{ color: p.fill, marginBottom: 2 }}>
                       {p.name}: <strong>{p.value} SKUs</strong>
                     </div>
                   ))}
-                  <div style={{ color: '#64748B', marginTop: 4, borderTop: '1px solid #2A3045', paddingTop: 4 }}>
-                    Total: <strong style={{ color: '#F1F5F9' }}>{total}</strong>
+                  <div style={{ color: '#94A3B8', marginTop: 4, borderTop: '1px solid #1E293B', paddingTop: 4 }}>
+                    Total: <strong style={{ color: '#F8FAFC' }}>{total}</strong>
                   </div>
                 </div>
               )
             }}
-            cursor={{ fill: '#ffffff08' }}
+            cursor={{ fill: 'rgba(99,102,241,0.06)' }}
           />
-          <Legend wrapperStyle={{ fontSize: 11, color: '#94A3B8' }} />
+          <Legend wrapperStyle={{ fontSize: 11, color: '#475569' }} />
           {['Red','Amber','Green'].map(t => (
             <Bar key={t} dataKey={t} name={t} stackId="a" fill={TIER_COLORS[t]} maxBarSize={52} />
           ))}

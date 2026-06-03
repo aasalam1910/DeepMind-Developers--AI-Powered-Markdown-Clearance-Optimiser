@@ -3,25 +3,25 @@ import { useMemo, useState } from 'react'
 const TIER_THEME = {
   Red: {
     accent: '#ef4444',
-    accentSoft: 'rgba(239, 68, 68, 0.18)',
-    panel: 'linear-gradient(135deg, #2a0e12 0%, #120b15 55%, #361117 100%)',
-    glow: 'rgba(239, 68, 68, 0.22)',
+    accentSoft: 'rgba(239, 68, 68, 0.10)',
+    panel: 'linear-gradient(135deg, #FFF5F5 0%, #FFFFFF 55%, #FEF2F2 100%)',
+    glow: 'rgba(239, 68, 68, 0.12)',
     icon: '●',
     strap: 'Clear now',
   },
   Amber: {
     accent: '#f59e0b',
-    accentSoft: 'rgba(245, 158, 11, 0.18)',
-    panel: 'linear-gradient(135deg, #2b1806 0%, #16100b 55%, #35240f 100%)',
-    glow: 'rgba(245, 158, 11, 0.22)',
+    accentSoft: 'rgba(245, 158, 11, 0.10)',
+    panel: 'linear-gradient(135deg, #FFFBEB 0%, #FFFFFF 55%, #FFFBEB 100%)',
+    glow: 'rgba(245, 158, 11, 0.12)',
     icon: '◆',
     strap: 'Act early',
   },
   Green: {
     accent: '#10b981',
-    accentSoft: 'rgba(16, 185, 129, 0.18)',
-    panel: 'linear-gradient(135deg, #082018 0%, #091314 55%, #103126 100%)',
-    glow: 'rgba(16, 185, 129, 0.22)',
+    accentSoft: 'rgba(16, 185, 129, 0.10)',
+    panel: 'linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 55%, #ECFDF5 100%)',
+    glow: 'rgba(16, 185, 129, 0.12)',
     icon: '▲',
     strap: 'Hold steady',
   },
@@ -109,9 +109,9 @@ export default function DiscountCard({ row }) {
     <>
       <div className="sku-detail-header">
         <span style={{ fontSize: '1.15rem', color: theme.accent }}>{theme.icon}</span>
-        <span className="sku-detail-name" style={{ color: '#F8FAFC' }}>{row.sku}</span>
+        <span className="sku-detail-name" style={{ color: '#0F172A' }}>{row.sku}</span>
         <span className="sku-detail-store">@</span>
-        <span className="sku-detail-name" style={{ color: '#F8FAFC' }}>{row.store}</span>
+        <span className="sku-detail-name" style={{ color: '#0F172A' }}>{row.store}</span>
         <span
           className="tier-badge"
           style={{
@@ -148,7 +148,7 @@ export default function DiscountCard({ row }) {
                 🎉 {row.festival_name} {row.festival_boost}x
               </span>
             )}
-            <span className="poster-deadline" style={{ borderColor: `${theme.accent}44`, color: '#E2E8F0' }}>
+            <span className="poster-deadline" style={{ borderColor: `${theme.accent}44`, color: '#475569', background: '#F8FAFC' }}>
               {actionLabel}
             </span>
           </div>
@@ -175,12 +175,12 @@ export default function DiscountCard({ row }) {
               <strong style={{ color: theme.accent }}>{posterStory.urgency}</strong>
             </div>
 
-            <div className="poster-badge" style={{ background: 'rgba(15, 23, 42, 0.45)' }}>
+            <div className="poster-badge" style={{ background: '#F8FAFC', borderColor: '#E5E7EB' }}>
               <span>Action by</span>
               <strong>{actDate || 'Monitor only'}</strong>
             </div>
 
-            <div className="poster-badge" style={{ background: 'rgba(15, 23, 42, 0.45)' }}>
+            <div className="poster-badge" style={{ background: '#F8FAFC', borderColor: '#E5E7EB' }}>
               <span>Store x SKU</span>
               <strong>{row.store} · {row.sku}</strong>
             </div>
