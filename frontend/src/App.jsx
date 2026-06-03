@@ -149,9 +149,14 @@ export default function App() {
         {/* Hero */}
         <div className="hero-card">
           <span className="hero-icon">🏷️</span>
-          <div>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <h1 className="hero-title">AI-Powered Markdown &amp; Clearance Optimiser</h1>
             <p className="hero-sub">SKU-level markdown recommendations with explainable AI rationale</p>
+          </div>
+          <div className="hero-illu" aria-hidden="true">
+            <span className="hero-illu-box hero-illu-box-1">📦</span>
+            <span className="hero-illu-box hero-illu-box-2">📈</span>
+            <span className="hero-illu-box hero-illu-box-3">🏷️</span>
           </div>
         </div>
 

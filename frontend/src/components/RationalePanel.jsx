@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { fetchRationale } from '../api'
 
 const IMPACT_THEME = {
-  Red:   { accent: '#ef4444', accentSoft: 'rgba(239,68,68,0.18)',   panel: 'linear-gradient(135deg,#2a0e12 0%,#120b15 55%,#361117 100%)', glow: 'rgba(239,68,68,0.22)' },
-  Amber: { accent: '#f59e0b', accentSoft: 'rgba(245,158,11,0.18)',  panel: 'linear-gradient(135deg,#2b1806 0%,#16100b 55%,#35240f 100%)', glow: 'rgba(245,158,11,0.22)' },
-  Green: { accent: '#10b981', accentSoft: 'rgba(16,185,129,0.18)',  panel: 'linear-gradient(135deg,#082018 0%,#091314 55%,#103126 100%)', glow: 'rgba(16,185,129,0.22)' },
+  Red:   { accent: '#ef4444', accentSoft: 'rgba(239,68,68,0.10)',   panel: 'linear-gradient(135deg,#FFF5F5 0%,#FFFFFF 55%,#FEF2F2 100%)', glow: 'rgba(239,68,68,0.12)' },
+  Amber: { accent: '#f59e0b', accentSoft: 'rgba(245,158,11,0.10)',  panel: 'linear-gradient(135deg,#FFFBEB 0%,#FFFFFF 55%,#FFFBEB 100%)', glow: 'rgba(245,158,11,0.12)' },
+  Green: { accent: '#10b981', accentSoft: 'rgba(16,185,129,0.10)',  panel: 'linear-gradient(135deg,#ECFDF5 0%,#FFFFFF 55%,#ECFDF5 100%)', glow: 'rgba(16,185,129,0.12)' },
 }
 
 function ImpactCards({ row, seasonEndDate }) {
@@ -68,11 +68,11 @@ function ImpactCards({ row, seasonEndDate }) {
               {unitsAtRisk === 0 ? 'Full clearance expected' : `${unitsAtRisk} may remain unsold`}
             </strong>
           </div>
-          <div className="poster-badge" style={{ background: 'rgba(15,23,42,0.45)' }}>
+          <div className="poster-badge" style={{ background: '#F8FAFC', borderColor: '#E5E7EB' }}>
             <span>Velocity lift</span>
             <strong>{lift}x applied</strong>
           </div>
-          <div className="poster-badge" style={{ background: 'rgba(15,23,42,0.45)' }}>
+          <div className="poster-badge" style={{ background: '#F8FAFC', borderColor: '#E5E7EB' }}>
             <span>Season remaining</span>
             <strong>{Math.round(daysRemaining)} days</strong>
           </div>

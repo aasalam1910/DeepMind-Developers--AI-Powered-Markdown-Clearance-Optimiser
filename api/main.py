@@ -30,6 +30,11 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+async def root():
+    return {"status": "ok", "service": "Markdown Optimiser API"}
+
+
 def _to_records(df: pd.DataFrame) -> list:
     return json.loads(df.to_json(orient="records"))
 
