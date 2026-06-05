@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://YOUR-APP-NAME.onrender.com/api/:path*"
+      "destination": "https://deepmind-developers-ai-powered-markdown-t0n2.onrender.com/api/:path*"
     }
   ]
 }

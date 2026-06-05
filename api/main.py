@@ -27,7 +27,8 @@ import os
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
-    os.getenv("FRONTEND_URL", ""),          # set this in Render dashboard
+    "https://deep-mind-developers-ai-powered-mar.vercel.app",
+    os.getenv("FRONTEND_URL", ""),
 ]
 
 app.add_middleware(
