@@ -1,8 +1,6 @@
 fastapi
 uvicorn[standard]
 python-multipart
-<<<<<<< HEAD
-=======
 pandas
 groq
 streamlit
@@ -11,4 +9,3 @@ plotly
 openpyxl
 pytest
 python-dotenv
->>>>>>> 17de4fd (deploy commit)
