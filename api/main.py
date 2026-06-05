@@ -22,9 +22,17 @@ from config.settings import GROQ_API_KEY, LLM_MODEL, FESTIVAL_DEFAULT_BOOSTS
 
 app = FastAPI(title="Markdown Optimiser API")
 
+import os
+
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    os.getenv("FRONTEND_URL", ""),          # set this in Render dashboard
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=[o for o in ALLOWED_ORIGINS if o],
     allow_methods=["*"],
     allow_headers=["*"],
 )
