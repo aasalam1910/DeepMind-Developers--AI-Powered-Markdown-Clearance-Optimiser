@@ -6,7 +6,6 @@ import SKUTable      from './components/SKUTable'
 import DiscountCard  from './components/DiscountCard'
 import RationalePanel from './components/RationalePanel'
 import { loadSample, uploadFiles, detectFestivals } from './api'
-import StorePoster    from './components/StorePoster'
 
 const DEFAULT_SEASON = { start: '2026-03-01', end: '2026-06-30' }
 
@@ -20,12 +19,11 @@ export default function App() {
   const [appliedDates, setAppliedDates] = useState(DEFAULT_SEASON)
   const [filters,     setFilters]     = useState({ store: [], tier: [], category: [] })
   const [lastUpload,  setLastUpload]  = useState(null) // { posFile, invFile }
-  const [posterStore, setPosterStore] = useState(null)
   const [festivals,   setFestivals]   = useState([])
   const [festivalDetecting, setFestivalDetecting] = useState(false)
   const discountRef = useRef(null)
   const tableRef    = useRef(null)
-  const posterRef   = useRef(null)
+
 
   const filtered = useMemo(() => {
     if (!recommendations) return []
@@ -51,7 +49,7 @@ export default function App() {
 
   const handleLoadSample = async (dates) => {
     const d = dates || seasonDates
-    setLoading(true); setError(null); setSelectedRow(null); setRationales({}); setPosterStore(null)
+    setLoading(true); setError(null); setSelectedRow(null); setRationales({})
     try {
       const data = await loadSample(d, festivals)
       setRecommendations(data.recommendations)
@@ -67,7 +65,7 @@ export default function App() {
 
   const handleUpload = async (posFile, invFile, dates) => {
     const d = dates || seasonDates
-    setLoading(true); setError(null); setSelectedRow(null); setRationales({}); setPosterStore(null)
+    setLoading(true); setError(null); setSelectedRow(null); setRationales({})
     try {
       const data = await uploadFiles(posFile, invFile, d, festivals)
       setRecommendations(data.recommendations)
@@ -90,16 +88,9 @@ export default function App() {
   }
 
   const handleShowPoster = (store, tier) => {
-    setPosterStore(prev =>
-      prev?.store === store && prev?.tier === tier ? null : { store, tier }
-    )
+    sessionStorage.setItem('posterData', JSON.stringify({ store, tier, recommendations }))
+    window.open('/poster.html', '_blank')
   }
-
-  useEffect(() => {
-    if (posterStore && posterRef.current) {
-      posterRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }, [posterStore])
 
   const datesChanged = recommendations &&
     (seasonDates.start !== appliedDates.start || seasonDates.end !== appliedDates.end)
@@ -190,17 +181,6 @@ export default function App() {
 
         {recommendations && !loading && (
           <>
-            {posterStore && (
-              <div ref={posterRef}>
-                <StorePoster
-                  store={posterStore.store}
-                  tier={posterStore.tier}
-                  recommendations={recommendations}
-                  onClose={() => setPosterStore(null)}
-                />
-              </div>
-            )}
-
             <KPICards recommendations={filtered.length ? filtered : recommendations} />
             <Charts   recommendations={filtered.length ? filtered : recommendations} />
             <div ref={tableRef} className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
