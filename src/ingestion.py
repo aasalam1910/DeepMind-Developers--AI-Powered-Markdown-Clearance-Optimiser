@@ -50,4 +50,7 @@ def load_and_validate(pos_file, inventory_file) -> tuple[pd.DataFrame, pd.DataFr
     if "category" not in inv_df.columns:
         inv_df["category"] = "Default"
 
+    if "price" in inv_df.columns:
+        inv_df["price"] = pd.to_numeric(inv_df["price"], errors="coerce").fillna(0)
+
     return pos_df, inv_df

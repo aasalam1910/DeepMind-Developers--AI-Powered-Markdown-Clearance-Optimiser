@@ -8,6 +8,7 @@ np.random.seed(42)
 
 STORES = ["MUM-1", "DEL-2", "BLR-3", "CHN-4", "HYD-5"]
 CATEGORY_SKUS = {"Apparel": 20, "Footwear": 15, "Home": 15}
+CATEGORY_PRICES = {"Apparel": 850, "Footwear": 1200, "Home": 650}
 START_DATE = pd.Timestamp("2026-03-01")
 
 skus = []
@@ -63,11 +64,13 @@ for sku_id, cat in skus:
             stock = int(total_sold * random.uniform(0.8, 1.8)) + random.randint(5, 20)
         else:
             stock = int(total_sold * random.uniform(0.15, 0.5)) + random.randint(2, 10)
+        price = CATEGORY_PRICES.get(cat, 750) + random.randint(-100, 100)
         inv_rows.append({
             "sku": sku_id,
             "store": store,
             "stock_on_hand": max(stock, 1),
             "category": cat,
+            "price": max(price, 100),
         })
 
 inv_df = pd.DataFrame(inv_rows)
