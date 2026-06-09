@@ -41,7 +41,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"status": "ok", "service": "Markdown Optimiser API"}
+    return {"status": "ok", "service": "Markdown Optimiser API", "version": "2"}
 
 
 def _to_records(df: pd.DataFrame) -> list:
