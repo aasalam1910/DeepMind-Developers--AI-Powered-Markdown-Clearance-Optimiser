@@ -6,6 +6,8 @@ import SKUTable      from './components/SKUTable'
 import DiscountCard  from './components/DiscountCard'
 import RationalePanel from './components/RationalePanel'
 import { loadSample, uploadFiles, detectFestivals } from './api'
+import HistoricalInsights from './components/HistoricalInsights'
+import { saveAnalysisRun } from './components/AnalysisHistory'
 
 const DEFAULT_SEASON = { start: '2026-03-01', end: '2026-06-30' }
 
@@ -21,6 +23,8 @@ export default function App() {
   const [lastUpload,  setLastUpload]  = useState(null) // { posFile, invFile }
   const [festivals,   setFestivals]   = useState([])
   const [festivalDetecting, setFestivalDetecting] = useState(false)
+  const [showInsights, setShowInsights] = useState(false)
+
   const discountRef = useRef(null)
   const tableRef    = useRef(null)
 
@@ -56,6 +60,7 @@ export default function App() {
       setAppliedDates(d)
       setLastUpload(null)
       setFilters({ store: [], tier: [], category: [] })
+      saveAnalysisRun(data.recommendations, d, 'sample')
     } catch (e) {
       setError(e.message)
     } finally {
@@ -72,6 +77,7 @@ export default function App() {
       setAppliedDates(d)
       setLastUpload({ posFile, invFile })
       setFilters({ store: [], tier: [], category: [] })
+      saveAnalysisRun(data.recommendations, d, 'upload')
     } catch (e) {
       setError(e.message)
     } finally {
@@ -150,7 +156,6 @@ export default function App() {
             <span className="hero-illu-box hero-illu-box-3">🏷️</span>
           </div>
         </div>
-
         {error && <div className="alert-error">⚠ {error}</div>}
 
         {loading && (
@@ -183,6 +188,24 @@ export default function App() {
           <>
             <KPICards recommendations={filtered.length ? filtered : recommendations} />
             <Charts   recommendations={filtered.length ? filtered : recommendations} />
+            <div className="hi-trigger-row">
+              <button
+                className={`hi-trigger-btn${showInsights ? ' hi-trigger-btn-open' : ''}`}
+                onClick={() => setShowInsights(p => !p)}
+              >
+                <span className="hi-trigger-icon">🕐</span>
+                <span className="hi-trigger-label">Historical Patterns</span>
+                <span className="hi-trigger-badge">Past 5 Years</span>
+                <span className="hi-trigger-chevron">{showInsights ? '▲' : '▼'}</span>
+              </button>
+            </div>
+            {showInsights && (
+              <HistoricalInsights
+                key={`${appliedDates.start}_${appliedDates.end}`}
+                seasonDates={appliedDates}
+                recommendations={recommendations}
+              />
+            )}
             <div ref={tableRef} className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>
                 📋 SKU Recommendations
