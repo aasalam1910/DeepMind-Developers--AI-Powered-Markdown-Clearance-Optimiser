@@ -36,6 +36,7 @@ function formatCellValue(value, isNumeric, colKey) {
 export default function SKUTable({ data, selectedRow, onSelect }) {
   const [sortKey, setSortKey] = useState('urgency_tier')
   const [sortDir, setSortDir] = useState('asc')
+  const [search,  setSearch]  = useState('')
 
   const availableCols = COLS.filter(
     (col) => col.key === 'urgency_tier' || data.some((row) => row?.[col.key] != null)
@@ -50,7 +51,16 @@ export default function SKUTable({ data, selectedRow, onSelect }) {
     }
   }
 
-  const sorted = [...data].sort((a, b) => {
+  const q = search.trim().toLowerCase()
+  const filtered = q
+    ? data.filter(r =>
+        (r.sku      || '').toLowerCase().includes(q) ||
+        (r.store    || '').toLowerCase().includes(q) ||
+        (r.category || '').toLowerCase().includes(q)
+      )
+    : data
+
+  const sorted = [...filtered].sort((a, b) => {
     let av = a[sortKey]
     let bv = b[sortKey]
 
@@ -71,7 +81,33 @@ export default function SKUTable({ data, selectedRow, onSelect }) {
   const selectedKey = selectedRow ? `${selectedRow.sku}_${selectedRow.store}` : null
 
   return (
-    <div className="table-wrap">
+    <div className="table-outer">
+      <div className="table-search-bar">
+        <span className="table-search-icon">🔍</span>
+        <input
+          className="table-search-input"
+          type="text"
+          placeholder="Search by SKU, store or category…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          autoComplete="off"
+          spellCheck={false}
+        />
+        {search && (
+          <>
+            <span className="table-search-count">
+              {sorted.length} result{sorted.length !== 1 ? 's' : ''}
+            </span>
+            <button
+              className="table-search-clear"
+              onClick={() => setSearch('')}
+              title="Clear search"
+            >✕</button>
+          </>
+        )}
+      </div>
+
+      <div className="table-wrap">
       <table className="sku-table">
         <thead>
           <tr>
@@ -138,6 +174,7 @@ export default function SKUTable({ data, selectedRow, onSelect }) {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
