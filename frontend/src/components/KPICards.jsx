@@ -125,7 +125,7 @@ function SkuPill({ sku, store, loss, pct, hasPrices, stroke, accentRgb, isGreen 
 
 function CategoryBreakdown({ recs, tier, stroke, accentRgb, isGreen }) {
   const [openCat, setOpenCat] = useState(null)
-  const hasPrices = recs.some(r => (r.price || 0) > 0)
+  const hasPrices = recs.some(r => r.price != null && Number(r.price) > 0)
   const rows      = getCategoryBreakdown(recs, tier, hasPrices)
   const totalLoss = rows.reduce((s, r) => s + r.loss, 0)
 
