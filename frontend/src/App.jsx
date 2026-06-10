@@ -186,7 +186,15 @@ export default function App() {
 
         {recommendations && !loading && (
           <>
-            <KPICards recommendations={filtered.length ? filtered : recommendations} />
+            <KPICards
+              recommendations={filtered.length ? filtered : recommendations}
+              onSkuClick={(sku, store) => {
+                const row = recommendations.find(r => r.sku === sku && r.store === store)
+                if (!row) return
+                setSelectedRow(row)
+                setTimeout(() => tableRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
+              }}
+            />
             <Charts   recommendations={filtered.length ? filtered : recommendations} />
             <div className="hi-trigger-row">
               <button

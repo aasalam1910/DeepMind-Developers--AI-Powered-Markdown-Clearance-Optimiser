@@ -763,8 +763,15 @@ input[type="file"] { display: none; }
 .kpi-sku-loss {
   font-size: 0.65rem;
   font-weight: 800;
-  margin-left: auto;
 }
+.kpi-sku-goto {
+  font-size: 0.65rem;
+  font-weight: 700;
+  margin-left: auto;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.kpi-sku-pill:hover .kpi-sku-goto { opacity: 1; }
 .kpi-copied-toast {
   position: absolute;
   right: 8px;

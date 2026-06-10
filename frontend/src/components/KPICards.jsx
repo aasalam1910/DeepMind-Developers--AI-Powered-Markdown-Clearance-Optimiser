@@ -90,40 +90,24 @@ function managerSummary(cat, loss, skuCount, stores, rank, totalLoss, tier, hasP
   return `${cat} — ${pct}% of exposure (${lossStr}) across ${stores} store${stores !== 1 ? 's' : ''}.`
 }
 
-function CopiedToast({ sku }) {
-  return (
-    <span className="kpi-copied-toast">✓ {sku} copied</span>
-  )
-}
-
-function SkuPill({ sku, store, loss, pct, hasPrices, stroke, accentRgb, isGreen }) {
-  const [copied, setCopied] = useState(false)
-
-  const handleClick = (e) => {
-    e.stopPropagation()
-    navigator.clipboard.writeText(sku).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
-    })
-  }
-
+function SkuPill({ sku, store, loss, pct, hasPrices, stroke, accentRgb, isGreen, onSkuClick }) {
   return (
     <button
       className="kpi-sku-pill"
       style={{ borderColor: `rgba(${accentRgb},0.35)`, color: stroke }}
-      onClick={handleClick}
-      title={`Click to copy SKU ID: ${sku}`}
+      onClick={e => { e.stopPropagation(); onSkuClick(sku, store) }}
+      title={`Go to ${sku} at ${store} in the table`}
     >
       <span className="kpi-sku-id">{sku}</span>
       <span className="kpi-sku-store">{store}</span>
       {!isGreen && <span className="kpi-sku-pct">{pct}% off</span>}
       {hasPrices && <span className="kpi-sku-loss">{formatRupees(loss)}</span>}
-      {copied && <CopiedToast sku={sku} />}
+      <span className="kpi-sku-goto">↓ go to row</span>
     </button>
   )
 }
 
-function CategoryBreakdown({ recs, tier, stroke, accentRgb, isGreen }) {
+function CategoryBreakdown({ recs, tier, stroke, accentRgb, isGreen, onSkuClick }) {
   const [openCat, setOpenCat] = useState(null)
   const hasPrices = recs.some(r => r.price != null && Number(r.price) > 0)
   const rows      = getCategoryBreakdown(recs, tier, hasPrices)
@@ -196,7 +180,7 @@ function CategoryBreakdown({ recs, tier, stroke, accentRgb, isGreen }) {
             {/* Top SKUs */}
             {catOpen && (
               <div className="kpi-bd-skus">
-                <div className="kpi-bd-skus-hint">Click any SKU to copy ID for search</div>
+                <div className="kpi-bd-skus-hint">Click any SKU to jump to its row in the table</div>
                 {topSkus.map(s => (
                   <SkuPill
                     key={`${s.sku}-${s.store}`}
@@ -208,6 +192,7 @@ function CategoryBreakdown({ recs, tier, stroke, accentRgb, isGreen }) {
                     stroke={stroke}
                     accentRgb={accentRgb}
                     isGreen={isGreen}
+                    onSkuClick={onSkuClick}
                   />
                 ))}
               </div>
@@ -219,7 +204,7 @@ function CategoryBreakdown({ recs, tier, stroke, accentRgb, isGreen }) {
   )
 }
 
-export default function KPICards({ recommendations }) {
+export default function KPICards({ recommendations, onSkuClick }) {
   const [expanded, setExpanded] = useState(null)
 
   const counts = {
@@ -275,6 +260,7 @@ export default function KPICards({ recommendations }) {
             stroke={activeCard.stroke}
             accentRgb={activeCard.accentRgb}
             isGreen={activeCard.key === 'Green'}
+            onSkuClick={onSkuClick}
           />
         </div>
       )}

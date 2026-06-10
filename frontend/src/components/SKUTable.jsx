@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const TIER_COLORS = { Red: '#EF4444', Amber: '#F59E0B', Green: '#10B981' }
 const TIER_BG = { Red: '#2D1515', Amber: '#2D2010', Green: '#0F2D1E' }
@@ -37,6 +37,13 @@ export default function SKUTable({ data, selectedRow, onSelect }) {
   const [sortKey, setSortKey] = useState('urgency_tier')
   const [sortDir, setSortDir] = useState('asc')
   const [search,  setSearch]  = useState('')
+  const selectedRowRef = useRef(null)
+
+  useEffect(() => {
+    if (selectedRow && selectedRowRef.current) {
+      selectedRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [selectedRow])
 
   const availableCols = COLS.filter(
     (col) => col.key === 'urgency_tier' || data.some((row) => row?.[col.key] != null)
@@ -137,6 +144,7 @@ export default function SKUTable({ data, selectedRow, onSelect }) {
             return (
               <tr
                 key={rowKey}
+                ref={selectedKey === rowKey ? selectedRowRef : null}
                 onClick={() => onSelect(row)}
                 className={selectedKey === rowKey ? 'selected' : ''}
               >
